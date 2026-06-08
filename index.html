@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUTOTRACK — Chicago</title>
+<meta name="description" content="Buy certified vehicles, rent by the day, or turn your car into monthly income.">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0A1628;--navy-mid:#0F2040;--navy-light:#1A3458;
+  --white:#FFFFFF;--muted:rgba(255,255,255,0.72);--subtle:rgba(255,255,255,0.4);
+  --accent:#7AABDF;--border:rgba(255,255,255,0.1);--glass:rgba(255,255,255,0.04);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--navy);color:#fff;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--navy)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 3rem;height:68px;display:flex;align-items:center;justify-content:space-between;transition:all 0.5s}
+.nav.scrolled{background:rgba(10,22,40,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.nav-logo svg{width:38px;height:28px;filter:drop-shadow(0 0 8px rgba(122,171,223,0.4))}
+.nav-wordmark{font-size:14px;font-weight:700;letter-spacing:4px;text-transform:uppercase}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-size:11px;font-weight:400;letter-spacing:2px;color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color 0.3s;cursor:pointer}
+.nav-links a:hover{color:#fff}
+.nav-right{display:flex;align-items:center;gap:0.5rem}
+.lang-btn{font-size:11px;font-weight:500;letter-spacing:1px;padding:5px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:var(--subtle);cursor:pointer;transition:all 0.3s;text-transform:uppercase;font-family:'Montserrat',sans-serif}
+.lang-btn.active{border-color:rgba(255,255,255,0.5);color:#fff;background:rgba(255,255,255,0.08)}
+
+/* ── HERO 3D ── */
+#hero{position:relative;width:100%;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#three-canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-overlay{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(10,22,40,0.3) 0%,rgba(10,22,40,0.75) 100%)}
+.hero-content{position:relative;z-index:2;text-align:center;padding:0 2rem}
+.hero-eyebrow{font-size:11px;font-weight:400;letter-spacing:5px;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;opacity:0;animation:fadeUp 1s ease 0.5s forwards}
+.hero-title{font-size:clamp(56px,9vw,110px);font-weight:200;letter-spacing:14px;text-transform:uppercase;line-height:0.95;margin-bottom:1.5rem;opacity:0;animation:fadeUp 1s ease 0.7s forwards}
+.hero-title b{font-weight:700}
+.hero-sub{font-size:15px;font-weight:300;color:var(--muted);max-width:460px;margin:0 auto 3rem;line-height:1.8;opacity:0;animation:fadeUp 1s ease 0.9s forwards}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp 1s ease 1.1s forwards}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--subtle);font-size:10px;letter-spacing:3px;text-transform:uppercase;z-index:2;opacity:0;animation:fadeUp 1s ease 1.6s forwards}
+.scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.4));animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:0.3}50%{opacity:1}}
+
+/* ── BUTTONS ── */
+.btn-white{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:14px 36px;background:#fff;color:var(--navy);border:none;border-radius:2px;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px}
+.btn-white:hover{background:rgba(255,255,255,0.88);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.btn-ghost{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:400;letter-spacing:3px;text-transform:uppercase;padding:14px 36px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:2px;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.05);transform:translateY(-2px)}
+
+/* ── SERVICES ── */
+.services{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.07)}
+@media(max-width:768px){.services{grid-template-columns:1fr}}
+.service-card{background:var(--navy);padding:3.5rem 2.5rem;cursor:pointer;border:none;width:100%;text-align:left;font-family:'Montserrat',sans-serif;color:#fff;position:relative;overflow:hidden;transition:background 0.4s}
+.service-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(122,171,223,0.08),transparent 60%);opacity:0;transition:opacity 0.4s}
+.service-card:hover{background:var(--navy-mid)}
+.service-card:hover::after{opacity:1}
+.svc-num{font-size:10px;letter-spacing:4px;color:rgba(255,255,255,0.25);margin-bottom:2rem;font-weight:400}
+.svc-icon{width:44px;height:44px;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;transition:border-color 0.3s}
+.service-card:hover .svc-icon{border-color:rgba(122,171,223,0.5)}
+.svc-name{font-size:17px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.75rem}
+.svc-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:2rem}
+.svc-arrow{font-size:11px;letter-spacing:2px;color:var(--subtle);text-transform:uppercase;display:flex;align-items:center;gap:8px;transition:all 0.3s}
+.service-card:hover .svc-arrow{color:#fff;gap:14px}
+
+/* ── SECTIONS ── */
+.section{padding:7rem 3rem}
+@media(max-width:768px){.section{padding:4rem 1.5rem}}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-label{font-size:10px;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem}
+.section-title{font-size:clamp(28px,4vw,50px);font-weight:200;letter-spacing:4px;text-transform:uppercase;color:#fff;margin-bottom:0.5rem}
+.section-title b{font-weight:700}
+.section-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:3rem}
+
+/* ── TABS ── */
+.tab-nav{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;margin-bottom:0}
+.tab-btn{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;padding:1rem 2rem;background:transparent;color:var(--subtle);border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all 0.3s}
+.tab-btn.active{color:#fff;border-bottom-color:#fff;font-weight:600}
+.tab-btn:hover:not(.active){color:var(--muted)}
+.tab-panel{display:none;padding-top:3rem}
+.tab-panel.active{display:block}
+
+/* ── CAR GRID ── */
+.cars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+@media(max-width:900px){.cars-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.cars-grid{grid-template-columns:1fr}}
+.car-card{background:var(--navy);overflow:hidden;cursor:pointer;position:relative;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s,background 0.3s}
+.car-card.visible{opacity:1;transform:translateY(0)}
+.car-card:hover{background:var(--navy-mid)}
+.car-thumb{width:100%;height:160px;background:var(--navy-mid);display:flex;align-items:center;justify-content:center;font-size:56px;border-bottom:1px solid var(--border);transition:background 0.3s;position:relative}
+.car-card:hover .car-thumb{background:var(--navy-light)}
+.car-badge-pill{position:absolute;top:10px;right:10px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;background:rgba(10,22,40,0.9);border:1px solid var(--border);color:var(--muted)}
+.car-info{padding:1.5rem}
+.car-year{font-size:10px;letter-spacing:3px;color:var(--subtle);margin-bottom:4px}
+.car-name{font-size:15px;font-weight:600;margin-bottom:0.5rem}
+.car-specs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.spec-pill{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--subtle);padding:3px 8px;border:1px solid var(--border)}
+.car-footer{display:flex;align-items:center;justify-content:space-between}
+.car-price{font-size:20px;font-weight:300;letter-spacing:1px}
+.car-cta{font-size:10px;letter-spacing:2px;color:var(--subtle);display:flex;align-items:center;gap:6px;text-transform:uppercase;transition:all 0.3s}
+.car-card:hover .car-cta{color:#fff;gap:10px}
+
+/* EMPTY */
+.empty-cars{text-align:center;padding:5rem 2rem;color:var(--subtle);border:1px solid var(--border)}
+.empty-cars p{font-size:14px;letter-spacing:1px}
+
+/* ── RENT GRID ── */
+.rent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+@media(max-width:900px){.rent-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.rent-grid{grid-template-columns:1fr}}
+.rent-card{background:var(--navy);padding:2rem;cursor:pointer;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s,background 0.3s}
+.rent-card.visible{opacity:1;transform:translateY(0)}
+.rent-card:hover{background:var(--navy-mid)}
+.rent-emoji{font-size:40px;margin-bottom:1.2rem;display:block}
+.rent-name{font-size:15px;font-weight:600;margin-bottom:4px}
+.rent-specs{font-size:11px;color:var(--subtle);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.rent-badge{display:inline-block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border:1px solid var(--border);color:var(--subtle);margin-bottom:1.2rem}
+.rent-price{font-size:22px;font-weight:200;letter-spacing:1px}
+.rent-price span{font-size:12px;color:var(--subtle)}
+.rent-book-btn{margin-top:1rem;width:100%;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:10px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);cursor:pointer;transition:all 0.3s}
+.rent-book-btn:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.5)}
+
+/* ── EARN SECTION ── */
+.earn-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+@media(max-width:800px){.earn-layout{grid-template-columns:1fr;gap:3rem}}
+.earn-steps{display:flex;flex-direction:column}
+.earn-step{display:flex;gap:1.5rem;padding:2rem 0;border-bottom:1px solid var(--border);opacity:0;transform:translateX(-20px);transition:opacity 0.7s,transform 0.7s}
+.earn-step.visible{opacity:1;transform:translateX(0)}
+.earn-step:first-child{padding-top:0}
+.step-num{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.2);min-width:30px;padding-top:2px;font-weight:400}
+.step-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ── FORM ── */
+.form-box{background:var(--glass);border:1px solid var(--border);padding:2.5rem}
+.form-title{font-size:16px;font-weight:300;letter-spacing:3px;text-transform:uppercase;margin-bottom:2rem}
+.fg{margin-bottom:1.2rem}
+.fg label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:500}
+.fg input,.fg select,.fg textarea{width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.15);padding:10px 0;color:#fff;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:300;outline:none;transition:border-color 0.3s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-bottom-color:rgba(255,255,255,0.5)}
+.fg input::placeholder,.fg textarea::placeholder{color:rgba(255,255,255,0.2)}
+.fg select option{background:var(--navy-mid);color:#fff}
+.fg textarea{resize:vertical;min-height:70px}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.upload-zone{border:1px dashed rgba(255,255,255,0.12);padding:1.5rem;text-align:center;cursor:pointer;transition:border-color 0.3s;margin-bottom:1.5rem}
+.upload-zone:hover{border-color:rgba(255,255,255,0.3)}
+.upload-text{font-size:12px;color:var(--subtle);letter-spacing:1px}
+.btn-submit{font-family:'Montserrat',sans-serif;width:100%;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:16px;background:#fff;color:var(--navy);border:none;cursor:pointer;transition:all 0.3s}
+.btn-submit:hover{background:rgba(255,255,255,0.9)}
+.btn-submit:disabled{opacity:0.6;cursor:not-allowed}
+.form-success{display:none;text-align:center;padding:3rem}
+.form-success.show{display:block}
+.form-success-icon{font-size:36px;margin-bottom:1rem}
+.form-success-text{font-size:13px;color:var(--muted);letter-spacing:1px;line-height:1.7}
+
+/* ── COMING SOON ── */
+.coming-soon{border:1px solid var(--border);padding:6rem 3rem;text-align:center;background:linear-gradient(135deg,rgba(122,171,223,0.05),transparent 60%)}
+.cs-pill{display:inline-block;font-size:10px;letter-spacing:4px;text-transform:uppercase;padding:5px 16px;border:1px solid rgba(122,171,223,0.3);color:var(--accent);margin-bottom:1.5rem}
+.cs-title{font-size:clamp(26px,4vw,50px);font-weight:200;letter-spacing:6px;text-transform:uppercase;margin-bottom:1rem}
+.cs-title b{font-weight:700}
+.cs-desc{font-size:13px;color:var(--muted);max-width:480px;margin:0 auto 2.5rem;line-height:1.8}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(5,12,24,0.92);backdrop-filter:blur(12px);align-items:flex-start;justify-content:center;padding:2rem;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--navy-mid);border:1px solid rgba(255,255,255,0.12);width:100%;max-width:660px;margin:auto;animation:modalIn 0.4s cubic-bezier(0.16,1,0.3,1)}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:none}}
+.modal-close{position:absolute;top:1.2rem;right:1.2rem;background:transparent;border:1px solid var(--border);width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:var(--subtle);cursor:pointer;font-size:18px;transition:all 0.3s}
+.modal-close:hover{border-color:rgba(255,255,255,0.4);color:#fff}
+.modal-gallery{display:grid;grid-template-columns:2fr 1fr;gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.modal-main{height:220px;background:var(--navy-light);display:flex;align-items:center;justify-content:center;font-size:70px}
+.modal-thumbs{display:flex;flex-direction:column;gap:1px}
+.modal-thumb{flex:1;background:var(--navy-light);display:flex;align-items:center;justify-content:center;font-size:26px;opacity:0.4}
+.modal-body{padding:2rem 2.5rem;position:relative}
+.modal-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.modal-name{font-size:26px;font-weight:300;letter-spacing:2px;text-transform:uppercase;margin-bottom:0.25rem}
+.modal-price{font-size:34px;font-weight:200;letter-spacing:2px;margin-bottom:1.5rem}
+.spec-table{width:100%;margin-bottom:1.5rem;border-collapse:collapse}
+.spec-table td{padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px}
+.spec-table td:first-child{color:var(--subtle);font-size:11px;letter-spacing:1px;text-transform:uppercase;width:45%}
+.spec-table td:last-child{color:#fff;font-weight:300}
+.condition-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:1rem 1.25rem;margin-bottom:1rem}
+.condition-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--subtle);margin-bottom:5px}
+.condition-text{font-size:13px;color:var(--muted);line-height:1.6}
+.modal-btns{display:flex;gap:0.75rem;flex-wrap:wrap}
+.modal-btn-p{font-family:'Montserrat',sans-serif;flex:1;min-width:130px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:13px 20px;background:#fff;color:var(--navy);border:none;cursor:pointer;transition:all 0.3s}
+.modal-btn-p:hover{background:rgba(255,255,255,0.9)}
+.modal-btn-s{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;padding:13px 20px;background:transparent;color:#fff;border:1px solid var(--border);cursor:pointer;transition:all 0.3s}
+.modal-btn-s:hover{border-color:rgba(255,255,255,0.5)}
+
+/* ── RENT REQUEST MODAL ── */
+.rent-modal-car{display:flex;align-items:center;gap:1rem;padding:1.25rem 2rem;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.rent-modal-emoji{font-size:36px}
+.rent-modal-carname{font-size:15px;font-weight:600;letter-spacing:0.5px}
+.rent-modal-price{font-size:13px;color:var(--accent);margin-top:2px}
+
+/* ── FOOTER ── */
+footer{padding:3rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-text{font-size:11px;letter-spacing:2px;color:var(--subtle);text-transform:uppercase}
+.footer-links{display:flex;gap:2rem}
+.footer-links a{font-size:11px;letter-spacing:1px;color:var(--subtle);text-decoration:none;cursor:pointer;transition:color 0.3s;text-transform:uppercase}
+.footer-links a:hover{color:var(--muted)}
+
+/* ── LOADING SPINNER ── */
+.spinner-wrap{display:flex;justify-content:center;padding:4rem}
+.spinner{width:30px;height:30px;border:2px solid rgba(255,255,255,0.1);border-top-color:rgba(255,255,255,0.5);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav">
+  <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg viewBox="0 0 90 65" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="10" y1="56" x2="40" y2="10" stroke-width="3.5"/>
+      <line x1="80" y1="56" x2="50" y2="10" stroke-width="3.5"/>
+      <line x1="22" y1="38" x2="58" y2="38" stroke-width="3" opacity="0.55"/>
+      <line x1="28" y1="26" x2="62" y2="48" stroke-width="2" opacity="0.38"/>
+    </svg>
+    <span class="nav-wordmark">AutoTrack</span>
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="goTab('buy')" id="nl-buy">Buy a car</a></li>
+    <li><a onclick="goTab('rent')" id="nl-rent">Rent a car</a></li>
+    <li><a onclick="goTab('list')" id="nl-list">Rent your car</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+  </div>
+</nav>
+
+<!-- HERO 3D -->
+<section id="hero">
+  <canvas id="three-canvas"></canvas>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow" id="h-eyebrow">Chicago · Est. 2024</div>
+    <h1 class="hero-title">AUTO<b>TRACK</b></h1>
+    <p class="hero-sub" id="h-sub">Buy certified vehicles, rent by the day, or turn your car into monthly income. Flexible. Honest. Built for you.</p>
+    <div class="hero-btns">
+      <button class="btn-white" onclick="goTab('buy')"><span id="h-cta1">Buy a car</span> →</button>
+      <button class="btn-ghost" onclick="goTab('list')"><span id="h-cta2">Rent your car</span></button>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div><span id="h-scroll">Scroll</span></div>
+</section>
+
+<!-- SERVICES -->
+<section style="padding:0;background:var(--navy-mid)">
+  <div class="services">
+    <button class="service-card" onclick="goTab('buy')">
+      <div class="svc-num">01</div>
+      <div class="svc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="8" width="20" height="10" rx="2"/><path d="M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/><circle cx="7" cy="14" r="1.5"/><circle cx="17" cy="14" r="1.5"/></svg></div>
+      <div class="svc-name" id="s1n">Buy a car</div>
+      <div class="svc-desc" id="s1d">Certified clean-title vehicles. Full spec sheets, honest condition notes, transparent pricing.</div>
+      <div class="svc-arrow"><span id="s1c">View inventory</span> →</div>
+    </button>
+    <button class="service-card" onclick="goTab('rent')">
+      <div class="svc-num">02</div>
+      <div class="svc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="svc-name" id="s2n">Rent a car</div>
+      <div class="svc-desc" id="s2d">Daily and weekly rentals. All vehicles inspected and ready for the road.</div>
+      <div class="svc-arrow"><span id="s2c">See options</span> →</div>
+    </button>
+    <button class="service-card" onclick="goTab('list')">
+      <div class="svc-num">03</div>
+      <div class="svc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div class="svc-name" id="s3n">Rent your car</div>
+      <div class="svc-desc" id="s3d">List your vehicle. We handle inspection, profile, renters. You earn monthly.</div>
+      <div class="svc-arrow"><span id="s3c">Get started</span> →</div>
+    </button>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<section class="section" id="main-section">
+  <div class="section-inner">
+    <div class="tab-nav">
+      <button class="tab-btn active" id="tab-buy" onclick="switchTab('buy')">Buy a car</button>
+      <button class="tab-btn" id="tab-rent" onclick="switchTab('rent')">Rent a car</button>
+      <button class="tab-btn" id="tab-list" onclick="switchTab('list')">Rent your car</button>
+      <button class="tab-btn" id="tab-sub" onclick="switchTab('sub')">Subscription</button>
+    </div>
+
+    <!-- BUY -->
+    <div class="tab-panel active" id="panel-buy">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem">
+        <div>
+          <div class="section-label" id="buy-lbl">Available inventory</div>
+          <h2 class="section-title" id="buy-title">Cars for <b>sale</b></h2>
+          <p style="font-size:13px;color:var(--subtle)" id="buy-sub">All vehicles — clean title.</p>
+        </div>
+      </div>
+      <div id="buy-grid-wrap"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- RENT -->
+    <div class="tab-panel" id="panel-rent">
+      <div style="margin-bottom:2.5rem">
+        <div class="section-label" id="rent-lbl">Daily & weekly rentals</div>
+        <h2 class="section-title" id="rent-title">Rent a <b>car</b></h2>
+        <p style="font-size:13px;color:var(--subtle)" id="rent-sub">Click on any car to request it.</p>
+      </div>
+      <div id="rent-grid-wrap"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- LIST -->
+    <div class="tab-panel" id="panel-list">
+      <div style="margin-bottom:3rem">
+        <div class="section-label" id="list-lbl">List your vehicle</div>
+        <h2 class="section-title" id="list-title">Turn your car<br>into <b>income</b></h2>
+      </div>
+      <div class="earn-layout">
+        <div class="earn-steps">
+          <div class="earn-step"><div class="step-num">01</div><div><div class="step-title" id="st1t">You bring the car</div><div class="step-desc" id="st1d">Our team inspects and evaluates your vehicle on-site.</div></div></div>
+          <div class="earn-step"><div class="step-num">02</div><div><div class="step-title" id="st2t">We build the profile</div><div class="step-desc" id="st2d">Full spec sheet, professional photos, and fair pricing.</div></div></div>
+          <div class="earn-step"><div class="step-num">03</div><div><div class="step-title" id="st3t">We find the renters</div><div class="step-desc" id="st3d">We manage bookings, clients, and logistics for you.</div></div></div>
+          <div class="earn-step"><div class="step-num">04</div><div><div class="step-title" id="st4t">You earn monthly</div><div class="step-desc" id="st4d">Passive income from your vehicle, no hassle required.</div></div></div>
+        </div>
+        <div class="form-box">
+          <div class="form-title" id="f-title-lbl">Submit your car</div>
+          <div id="list-form-body">
+            <div class="form-grid-2">
+              <div class="fg"><label id="lf-name">Full name</label><input type="text" id="lf-name-i" placeholder="John Smith"></div>
+              <div class="fg"><label id="lf-phone">Phone</label><input type="tel" id="lf-phone-i" placeholder="+1 (786) 000-0000"></div>
+              <div class="fg"><label id="lf-city">City</label><input type="text" id="lf-city-i" placeholder="Chicago, IL"></div>
+              <div class="fg"><label id="lf-year">Year</label><input type="text" id="lf-year-i" placeholder="2019"></div>
+            </div>
+            <div class="fg"><label id="lf-model">Make / Model</label><input type="text" id="lf-model-i" placeholder="Toyota Camry"></div>
+            <div class="fg"><label id="lf-miles">Mileage</label><input type="text" id="lf-miles-i" placeholder="85,000 mi"></div>
+            <div class="upload-zone">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round" style="display:block;margin:0 auto 6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <div class="upload-text" id="lf-upload">Upload photos of your car</div>
+            </div>
+            <button class="btn-submit" id="list-submit-btn" onclick="submitListForm()"><span id="lf-submit">Submit your car</span></button>
+          </div>
+          <div class="form-success" id="list-form-success">
+            <div class="form-success-icon">✓</div>
+            <div class="form-success-text" id="lf-success">We'll be in touch within 24 hours.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB -->
+    <div class="tab-panel" id="panel-sub">
+      <div style="padding-top:1rem"></div>
+      <div class="coming-soon">
+        <div class="cs-pill" id="cs-pill">Coming soon</div>
+        <div class="section-label" id="cs-lbl">Monthly & semester plans</div>
+        <h2 class="cs-title">Monthly<br><b>Subscription</b></h2>
+        <p class="cs-desc" id="cs-desc">Designed for international students and temporary residents. Stay in Chicago as long as you need — monthly payments, no daily surprises.</p>
+        <button class="btn-ghost" onclick="submitNotify()"><span id="cs-btn">Get notified when it launches</span> ↗</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <svg width="34" height="24" viewBox="0 0 90 65" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4">
+    <line x1="10" y1="56" x2="40" y2="10" stroke-width="3.5"/>
+    <line x1="80" y1="56" x2="50" y2="10" stroke-width="3.5"/>
+    <line x1="22" y1="38" x2="58" y2="38" stroke-width="3" opacity="0.55"/>
+    <line x1="28" y1="26" x2="62" y2="48" stroke-width="2" opacity="0.38"/>
+  </svg>
+  <div class="footer-text" id="ft-text">Chicago, IL · Flexibility · Empathy</div>
+  <div class="footer-links">
+    <a onclick="goTab('buy')" id="fl-buy">Buy</a>
+    <a onclick="goTab('rent')" id="fl-rent">Rent</a>
+    <a onclick="goTab('list')" id="fl-earn">Earn</a>
+  </div>
+</footer>
+
+<!-- CAR DETAIL MODAL -->
+<div class="modal-overlay" id="car-modal" onclick="closeModalBg(event,'car-modal')">
+  <div class="modal-box" style="position:relative">
+    <button class="modal-close" onclick="closeModal('car-modal')">×</button>
+    <div id="car-modal-content"></div>
+  </div>
+</div>
+
+<!-- RENT REQUEST MODAL -->
+<div class="modal-overlay" id="rent-modal" onclick="closeModalBg(event,'rent-modal')">
+  <div class="modal-box" style="position:relative">
+    <button class="modal-close" onclick="closeModal('rent-modal')">×</button>
+    <div id="rent-modal-content"></div>
+  </div>
+</div>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, onSnapshot, addDoc, getDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCnfdJLYdq7SGkakGv9eiDYZDgu3H91UsE",
+  authDomain: "autotrack-e8c42.firebaseapp.com",
+  projectId: "autotrack-e8c42",
+  storageBucket: "autotrack-e8c42.firebasestorage.app",
+  messagingSenderId: "213323890573",
+  appId: "1:213323890573:web:6b20040aa5bb74de5307c4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── Settings ───────────────────────────────────────────────
+let WA_NUMBER = '17869223853';
+let FORMSPREE_ID = '';
+
+async function loadSettings(){
+  try{
+    const snap = await getDoc(doc(db,'settings','main'));
+    if(snap.exists()){
+      const s = snap.data();
+      if(s.whatsapp) WA_NUMBER = s.whatsapp.replace(/\D/g,'');
+      if(s.formspree) FORMSPREE_ID = s.formspree;
+    }
+  } catch(e){ console.log('Settings load:', e.message); }
+}
+loadSettings();
+
+// ── Live data ──────────────────────────────────────────────
+let saleVehicles = [], rentVehicles = [];
+
+onSnapshot(collection(db,'sale_vehicles'), snap => {
+  saleVehicles = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderBuyGrid();
+});
+
+onSnapshot(collection(db,'rent_vehicles'), snap => {
+  rentVehicles = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderRentGrid();
+});
+
+// ── Render Buy ─────────────────────────────────────────────
+function renderBuyGrid(){
+  const wrap = document.getElementById('buy-grid-wrap');
+  if(!saleVehicles.length){
+    wrap.innerHTML=`<div class="empty-cars"><p>${lang==='es'?'No hay vehículos disponibles en este momento.':'No vehicles available at this time.'}</p></div>`;
+    return;
+  }
+  wrap.innerHTML=`<div class="cars-grid">${saleVehicles.map((v,i)=>`
+    <div class="car-card" onclick="window._openCarModal('${v.id}')" style="transition-delay:${i*60}ms">
+      <div class="car-thumb">${v.emoji||'🚗'}<div class="car-badge-pill">Clean title</div></div>
+      <div class="car-info">
+        <div class="car-year">${v.year}</div>
+        <div class="car-name">${v.make} ${v.model}</div>
+        <div class="car-specs">
+          <span class="spec-pill">${v.miles} mi</span>
+          <span class="spec-pill">${(v.drive||'').replace(' Wheel Drive','WD').replace('All','AW').replace('Front','FW').replace('Rear','RW')}</span>
+          <span class="spec-pill">${v.trans||'Auto'}</span>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">$${v.price}</div>
+          <div class="car-cta">${lang==='es'?'Ver':'View'} →</div>
+        </div>
+      </div>
+    </div>`).join('')}</div>`;
+  triggerReveal();
+}
+
+// ── Render Rent ────────────────────────────────────────────
+function renderRentGrid(){
+  const wrap = document.getElementById('rent-grid-wrap');
+  if(!rentVehicles.length){
+    wrap.innerHTML=`<div class="empty-cars"><p>${lang==='es'?'No hay vehículos disponibles en este momento.':'No vehicles available at this time.'}</p></div>`;
+    return;
+  }
+  wrap.innerHTML=`<div class="rent-grid">${rentVehicles.map((v,i)=>`
+    <div class="rent-card" style="transition-delay:${i*60}ms">
+      <span class="rent-emoji">${v.emoji||'🚗'}</span>
+      <div class="rent-name">${v.make} ${v.model} ${v.year}</div>
+      <div class="rent-specs">${v.trans||'Automatic'} · ${v.drive||''}</div>
+      <div class="rent-badge">${v.title}</div>
+      <div class="rent-price">$${v.priceDay} <span>/ day</span></div>
+      <button class="rent-book-btn" onclick="window._openRentModal('${v.id}')">
+        ${lang==='es'?'Solicitar renta →':'Request this car →'}
+      </button>
+    </div>`).join('')}</div>`;
+  triggerReveal();
+}
+
+// ── Car Detail Modal ───────────────────────────────────────
+window._openCarModal = function(id){
+  const v = saleVehicles.find(x=>x.id===id);
+  if(!v) return;
+  const es = lang==='es';
+  document.getElementById('car-modal-content').innerHTML=`
+    <div class="modal-gallery">
+      <div class="modal-main">${v.emoji||'🚗'}</div>
+      <div class="modal-thumbs">
+        <div class="modal-thumb">🖼</div><div class="modal-thumb">🖼</div><div class="modal-thumb">🖼</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-label">${es?'Hoja de vida del vehículo':'Vehicle profile'}</div>
+      <div class="modal-name">${v.year} ${v.make} ${v.model}</div>
+      <div class="modal-price">$${v.price}</div>
+      <table class="spec-table">
+        <tr><td>${es?'Millaje':'Odometer'}</td><td>${v.miles} mi</td></tr>
+        <tr><td>Title</td><td>${v.title}</td></tr>
+        <tr><td>VIN</td><td style="font-family:monospace;font-size:11px">${v.vin||'—'}</td></tr>
+        <tr><td>${es?'Carrocería':'Body'}</td><td>${v.body||'—'}</td></tr>
+        <tr><td>${es?'Color':'Color'}</td><td>${v.color||'—'}</td></tr>
+        <tr><td>${es?'Motor':'Engine'}</td><td>${v.engine||'—'}</td></tr>
+        <tr><td>${es?'Tracción':'Drive'}</td><td>${v.drive||'—'}</td></tr>
+        <tr><td>${es?'Cilindros':'Cylinders'}</td><td>${v.cyl||'—'}</td></tr>
+        <tr><td>${es?'Transmisión':'Transmission'}</td><td>${v.trans||'—'}</td></tr>
+        <tr><td>${es?'Combustible':'Fuel'}</td><td>${v.fuel||'—'}</td></tr>
+        <tr><td>${es?'Llaves':'Keys'}</td><td>${v.keys||'—'}</td></tr>
+      </table>
+      <div class="condition-box">
+        <div class="condition-label">${es?'Estado general':'General condition'}</div>
+        <div class="condition-text">${v.condition||'—'}</div>
+      </div>
+      <div class="condition-box">
+        <div class="condition-label">Extras</div>
+        <div class="condition-text">${v.extras||'—'}</div>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn-p" onclick="window.open('https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Hola! Estoy interesado en el '+v.year+' '+v.make+' '+v.model+' ($'+v.price+'). ¿Sigue disponible?')}','_blank')">
+          ${es?'Contactar vendedor':'Contact seller'} ↗
+        </button>
+        <button class="modal-btn-s" onclick="window.open('https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Hola! Quisiera agendar una visita para ver el '+v.year+' '+v.make+' '+v.model+'.')}','_blank')">
+          ${es?'Agendar visita':'Schedule viewing'} ↗
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('car-modal').classList.add('open');
+};
+
+// ── Rent Request Modal ─────────────────────────────────────
+window._openRentModal = function(id){
+  const v = rentVehicles.find(x=>x.id===id);
+  if(!v) return;
+  const es = lang==='es';
+  document.getElementById('rent-modal-content').innerHTML=`
+    <div class="rent-modal-car">
+      <div class="rent-modal-emoji">${v.emoji||'🚗'}</div>
+      <div>
+        <div class="rent-modal-carname">${v.year} ${v.make} ${v.model}</div>
+        <div class="rent-modal-price">$${v.priceDay} / day · ${v.title}</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-label" style="margin-bottom:1.5rem">${es?'Solicitud de renta':'Rental request'}</div>
+      <div id="rent-req-form">
+        <div class="form-grid-2" style="margin-bottom:1rem">
+          <div class="fg"><label>${es?'Nombre completo':'Full name'}</label><input type="text" id="rr-name" placeholder="John Smith"></div>
+          <div class="fg"><label>${es?'Teléfono':'Phone'}</label><input type="tel" id="rr-phone" placeholder="+1 (786) 000-0000"></div>
+        </div>
+        <div class="form-grid-2" style="margin-bottom:1rem">
+          <div class="fg"><label>${es?'Fecha inicio':'From date'}</label><input type="date" id="rr-from"></div>
+          <div class="fg"><label>${es?'Fecha fin':'To date'}</label><input type="date" id="rr-to"></div>
+        </div>
+        <div class="fg" style="margin-bottom:1.5rem">
+          <label>${es?'Notas adicionales':'Additional notes'}</label>
+          <textarea id="rr-notes" placeholder="${es?'¿Alguna pregunta o comentario?':'Any questions or comments?'}"></textarea>
+        </div>
+        <button class="btn-submit" id="rr-submit-btn" onclick="window._submitRentRequest('${v.id}','${v.year} ${v.make} ${v.model}','${v.priceDay}')">
+          ${es?'Enviar solicitud →':'Send request →'}
+        </button>
+      </div>
+      <div id="rent-req-success" style="display:none;text-align:center;padding:2rem">
+        <div style="font-size:32px;margin-bottom:1rem">✓</div>
+        <div style="font-size:13px;color:var(--muted);letter-spacing:1px;line-height:1.7">
+          ${es?'¡Solicitud recibida! Te contactaremos por WhatsApp pronto.':'Request received! We\'ll contact you via WhatsApp soon.'}
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('rent-modal').classList.add('open');
+};
+
+window._submitRentRequest = async function(carId, carModel, priceDay){
+  const name = document.getElementById('rr-name').value.trim();
+  const phone = document.getElementById('rr-phone').value.trim();
+  const from = document.getElementById('rr-from').value;
+  const to = document.getElementById('rr-to').value;
+  const notes = document.getElementById('rr-notes').value.trim();
+
+  if(!name||!phone){ alert(lang==='es'?'Completa nombre y teléfono.':'Please enter name and phone.'); return; }
+
+  const btn = document.getElementById('rr-submit-btn');
+  btn.disabled=true; btn.textContent='Sending...';
+
+  const request = {
+    name, phone, city:'', carId, carModel, priceDay, mileage:'',
+    dateFrom:from, dateTo:to, notes, status:'new', createdAt:Date.now()
+  };
+
+  try{
+    // Save to Firebase
+    await addDoc(collection(db,'rent_requests'), request);
+
+    // Send WhatsApp to owner
+    const days = (from && to) ? Math.ceil((new Date(to)-new Date(from))/(1000*60*60*24)) : '?';
+    const msg = encodeURIComponent(
+      `🚗 *New rental request — AUTOTRACK*\n\n`+
+      `👤 ${name}\n📱 ${phone}\n`+
+      `🚘 ${carModel} · $${priceDay}/day\n`+
+      `📅 ${from||'?'} → ${to||'?'} (${days} days)\n`+
+      (notes?`💬 ${notes}`:'')
+    );
+    window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');
+
+    document.getElementById('rent-req-form').style.display='none';
+    document.getElementById('rent-req-success').style.display='block';
+  } catch(e){
+    btn.disabled=false; btn.textContent='Send request →';
+    alert('Error: '+e.message);
+  }
+};
+
+// ── List form ──────────────────────────────────────────────
+window.submitListForm = async function(){
+  const name = document.getElementById('lf-name-i').value.trim();
+  const phone = document.getElementById('lf-phone-i').value.trim();
+  const city = document.getElementById('lf-city-i').value.trim();
+  const year = document.getElementById('lf-year-i').value.trim();
+  const model = document.getElementById('lf-model-i').value.trim();
+  const miles = document.getElementById('lf-miles-i').value.trim();
+
+  if(!name||!phone){ alert(lang==='es'?'Completa nombre y teléfono.':'Please enter name and phone.'); return; }
+
+  const btn = document.getElementById('list-submit-btn');
+  btn.disabled=true;
+
+  const data = { name, phone, city, carYear:year, carModel:model, mileage:miles, status:'new', createdAt:Date.now() };
+
+  try{
+    await addDoc(collection(db,'rent_requests'), data);
+
+    // WhatsApp to owner
+    const msg = encodeURIComponent(
+      `🚗 *New car to list — AUTOTRACK*\n\n`+
+      `👤 ${name}\n📱 ${phone}\n📍 ${city}\n`+
+      `🚘 ${year} ${model} · ${miles} mi`
+    );
+    window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');
+
+    // Formspree email
+    if(FORMSPREE_ID && FORMSPREE_ID !== 'YOUR_FORMSPREE_ID'){
+      fetch(`https://formspree.io/f/${FORMSPREE_ID}`,{
+        method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify({...data, _subject:`New car submission — ${year} ${model} — AUTOTRACK`})
+      }).catch(()=>{});
+    }
+
+    document.getElementById('list-form-body').style.display='none';
+    document.getElementById('list-form-success').classList.add('show');
+  } catch(e){
+    btn.disabled=false;
+    alert('Error: '+e.message);
+  }
+};
+
+window.submitNotify = function(){
+  const msg = encodeURIComponent('Hola! Me interesa la suscripción mensual de AUTOTRACK para estudiantes en Chicago. ¿Cuándo estará disponible?');
+  window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');
+};
+
+// ── Make functions global ──────────────────────────────────
+window.closeModal = id => document.getElementById(id).classList.remove('open');
+window.closeModalBg = (e,id) => { if(e.target===document.getElementById(id)) window.closeModal(id); };
+
+</script>
+
+<script>
+// ── Three.js 3D Hero ───────────────────────────────────────
+(function(){
+  const canvas = document.getElementById('three-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 18);
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0x0A1628, 2));
+  const dir = new THREE.DirectionalLight(0x7AABDF, 3);
+  dir.position.set(5, 8, 5);
+  scene.add(dir);
+  const pt = new THREE.PointLight(0x4488cc, 2, 40);
+  pt.position.set(-8, 4, 6);
+  scene.add(pt);
+  const pt2 = new THREE.PointLight(0xffffff, 0.5, 30);
+  pt2.position.set(8, -4, 4);
+  scene.add(pt2);
+
+  // Floating particles
+  const particleCount = 280;
+  const positions = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
+  for(let i=0; i<particleCount; i++){
+    positions[i*3]   = (Math.random()-0.5)*60;
+    positions[i*3+1] = (Math.random()-0.5)*40;
+    positions[i*3+2] = (Math.random()-0.5)*30;
+    sizes[i] = Math.random()*2.5+0.5;
+  }
+  const pgeo = new THREE.BufferGeometry();
+  pgeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  pgeo.setAttribute('size', new THREE.BufferAttribute(sizes,1));
+  const pmat = new THREE.PointsMaterial({color:0x4A7FC1, size:0.12, transparent:true, opacity:0.6, sizeAttenuation:true});
+  scene.add(new THREE.Points(pgeo, pmat));
+
+  // Floating rings
+  const rings = [];
+  const ringData = [
+    {r:6, tube:0.04, color:0x7AABDF, opacity:0.2, x:0, y:0, z:0},
+    {r:9, tube:0.03, color:0x4A7FC1, opacity:0.12, x:0, y:0, z:0},
+    {r:12, tube:0.02, color:0x1A3458, opacity:0.15, x:0, y:0, z:0},
+    {r:4, tube:0.05, color:0xAACCFF, opacity:0.18, x:3, y:2, z:-2},
+  ];
+  ringData.forEach(d=>{
+    const geo = new THREE.TorusGeometry(d.r, d.tube, 8, 80);
+    const mat = new THREE.MeshBasicMaterial({color:d.color, transparent:true, opacity:d.opacity});
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(d.x, d.y, d.z);
+    mesh.rotation.x = Math.random()*Math.PI;
+    mesh.rotation.y = Math.random()*Math.PI;
+    scene.add(mesh);
+    rings.push(mesh);
+  });
+
+  // Abstract car silhouette (geometric)
+  const carGroup = new THREE.Group();
+
+  // Body
+  const bodyGeo = new THREE.BoxGeometry(6, 1.4, 2.8);
+  const bodyMat = new THREE.MeshPhongMaterial({color:0x0F2040, transparent:true, opacity:0.9, shininess:80});
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.y = 0.3;
+  carGroup.add(body);
+
+  // Cabin
+  const cabinGeo = new THREE.BoxGeometry(3.4, 1.2, 2.4);
+  const cabinMat = new THREE.MeshPhongMaterial({color:0x1A3458, transparent:true, opacity:0.85, shininess:120});
+  const cabin = new THREE.Mesh(cabinGeo, cabinMat);
+  cabin.position.set(0.2, 1.35, 0);
+  carGroup.add(cabin);
+
+  // Windshield glow
+  const wGeo = new THREE.PlaneGeometry(2.2, 1);
+  const wMat = new THREE.MeshBasicMaterial({color:0x7AABDF, transparent:true, opacity:0.15, side:THREE.DoubleSide});
+  const wind = new THREE.Mesh(wGeo, wMat);
+  wind.position.set(1.4, 1.35, 1.22);
+  carGroup.add(wind);
+
+  // Wheels
+  const wheelData = [{x:2,z:1.5},{x:2,z:-1.5},{x:-2,z:1.5},{x:-2,z:-1.5}];
+  wheelData.forEach(w=>{
+    const wGeo = new THREE.CylinderGeometry(0.7, 0.7, 0.5, 24);
+    const wMat = new THREE.MeshPhongMaterial({color:0x0A0E1A, shininess:40});
+    const wheel = new THREE.Mesh(wGeo, wMat);
+    wheel.rotation.z = Math.PI/2;
+    wheel.position.set(w.x, -0.5, w.z);
+    carGroup.add(wheel);
+
+    // Rim
+    const rGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.52, 12);
+    const rMat = new THREE.MeshPhongMaterial({color:0x4A7FC1, shininess:200, transparent:true, opacity:0.7});
+    const rim = new THREE.Mesh(rGeo, rMat);
+    rim.rotation.z = Math.PI/2;
+    rim.position.set(w.x, -0.5, w.z);
+    carGroup.add(rim);
+  });
+
+  // Headlights
+  [{x:3.05,z:1},{x:3.05,z:-1}].forEach(h=>{
+    const lGeo = new THREE.SphereGeometry(0.25, 8, 8);
+    const lMat = new THREE.MeshBasicMaterial({color:0xAADDFF, transparent:true, opacity:0.8});
+    const light = new THREE.Mesh(lGeo, lMat);
+    light.position.set(h.x, 0.3, h.z);
+    carGroup.add(light);
+    const pointL = new THREE.PointLight(0x88CCFF, 1, 6);
+    pointL.position.set(h.x+0.5, 0.3, h.z);
+    carGroup.add(pointL);
+  });
+
+  // Wireframe outline
+  const outlineGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(6.1, 1.45, 2.85));
+  const outlineMat = new THREE.LineBasicMaterial({color:0x4A7FC1, transparent:true, opacity:0.3});
+  carGroup.add(new THREE.LineSegments(outlineGeo, outlineMat));
+
+  carGroup.position.set(0, 0, 0);
+  carGroup.rotation.y = Math.PI / 8;
+  scene.add(carGroup);
+
+  // Mouse parallax
+  let mx=0, my=0;
+  document.addEventListener('mousemove', e=>{
+    mx = (e.clientX/window.innerWidth - 0.5)*2;
+    my = (e.clientY/window.innerHeight - 0.5)*2;
+  });
+
+  // Animate
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);
+    t += 0.008;
+
+    // Car float + gentle rotate
+    carGroup.position.y = Math.sin(t*0.8)*0.3;
+    carGroup.rotation.y = Math.PI/8 + Math.sin(t*0.4)*0.08 + mx*0.04;
+    carGroup.rotation.x = my*0.03 + Math.sin(t*0.5)*0.02;
+
+    // Rings rotate
+    rings.forEach((r,i)=>{
+      r.rotation.x += 0.001*(i%2===0?1:-1);
+      r.rotation.z += 0.0005*(i+1);
+    });
+
+    // Particles drift
+    const pos = pgeo.attributes.position.array;
+    for(let i=0; i<particleCount; i++){
+      pos[i*3+1] += 0.008;
+      if(pos[i*3+1] > 20) pos[i*3+1] = -20;
+    }
+    pgeo.attributes.position.needsUpdate = true;
+
+    // Camera parallax
+    camera.position.x += (mx*1.5 - camera.position.x)*0.03;
+    camera.position.y += (-my*0.8 - camera.position.y)*0.03;
+    camera.lookAt(0, 0, 0);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize',()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+
+// ── Lang ───────────────────────────────────────────────────
+const TXT = {
+  en:{
+    'h-eyebrow':'Chicago · Est. 2024','h-sub':'Buy certified vehicles, rent by the day, or turn your car into monthly income. Flexible. Honest. Built for you.',
+    'h-cta1':'Buy a car','h-cta2':'Rent your car','h-scroll':'Scroll',
+    'nl-buy':'Buy a car','nl-rent':'Rent a car','nl-list':'Rent your car',
+    's1n':'Buy a car','s1d':'Certified clean-title vehicles. Full spec sheets, honest condition notes, transparent pricing.','s1c':'View inventory',
+    's2n':'Rent a car','s2d':'Daily and weekly rentals. All vehicles inspected and ready for the road.','s2c':'See options',
+    's3n':'Rent your car','s3d':'List your vehicle. We handle inspection, profile, renters. You earn monthly.','s3c':'Get started',
+    'buy-lbl':'Available inventory','buy-title':'Cars for <b>sale</b>','buy-sub':'All vehicles — clean title.',
+    'rent-lbl':'Daily & weekly rentals','rent-title':'Rent a <b>car</b>','rent-sub':'Click on any car to request it.',
+    'list-lbl':'List your vehicle','list-title':'Turn your car<br>into <b>income</b>',
+    'st1t':'You bring the car','st1d':'Our team inspects and evaluates your vehicle on-site.',
+    'st2t':'We build the profile','st2d':'Full spec sheet, professional photos, and fair pricing.',
+    'st3t':'We find the renters','st3d':'We manage bookings, clients, and logistics for you.',
+    'st4t':'You earn monthly','st4d':'Passive income from your vehicle, no hassle required.',
+    'f-title-lbl':'Submit your car',
+    'lf-name':'Full name','lf-phone':'Phone','lf-city':'City','lf-year':'Year','lf-model':'Make / Model','lf-miles':'Mileage',
+    'lf-upload':'Upload photos of your car','lf-submit':'Submit your car','lf-success':"We'll be in touch within 24 hours.",
+    'cs-pill':'Coming soon','cs-lbl':'Monthly & semester plans',
+    'cs-desc':'Designed for international students and temporary residents. Stay in Chicago as long as you need — monthly payments, no daily surprises.',
+    'cs-btn':'Get notified when it launches',
+    'ft-text':'Chicago, IL · Flexibility · Empathy','fl-buy':'Buy','fl-rent':'Rent','fl-earn':'Earn',
+    'tab-buy':'Buy a car','tab-rent':'Rent a car','tab-list':'Rent your car','tab-sub':'Subscription'
+  },
+  es:{
+    'h-eyebrow':'Chicago · Est. 2024','h-sub':'Compra vehículos certificados, renta por día, o convierte tu carro en ingreso mensual. Flexible. Honesto. Hecho para ti.',
+    'h-cta1':'Comprar un carro','h-cta2':'Renta tu carro','h-scroll':'Scroll',
+    'nl-buy':'Comprar','nl-rent':'Rentar','nl-list':'Renta tu carro',
+    's1n':'Comprar un carro','s1d':'Vehículos certificados con título limpio, fichas técnicas completas y precios transparentes.','s1c':'Ver inventario',
+    's2n':'Rentar un carro','s2d':'Rentas flexibles por día o semana. Todos los vehículos inspeccionados y listos.','s2c':'Ver opciones',
+    's3n':'Renta tu carro','s3d':'Publica tu vehículo. Manejamos todo — inspección, perfil, clientes. Tú ganas mensual.','s3c':'Comenzar',
+    'buy-lbl':'Inventario disponible','buy-title':'Carros en <b>venta</b>','buy-sub':'Todos los vehículos — título limpio.',
+    'rent-lbl':'Renta diaria y semanal','rent-title':'Rentar un <b>carro</b>','rent-sub':'Haz clic en cualquier carro para solicitarlo.',
+    'list-lbl':'Publica tu vehículo','list-title':'Convierte tu carro<br>en <b>ingreso</b>',
+    'st1t':'Tú pones el carro','st1d':'Nuestro equipo lo inspecciona y evalúa en sitio.',
+    'st2t':'Creamos la hoja de vida','st2d':'Especificaciones completas, fotos profesionales y precio justo.',
+    'st3t':'Buscamos los clientes','st3d':'Manejamos reservas, clientes y logística por ti.',
+    'st4t':'Tú ganas mensual','st4d':'Ingreso pasivo de tu vehículo, sin complicaciones.',
+    'f-title-lbl':'Envía tu carro',
+    'lf-name':'Nombre completo','lf-phone':'Teléfono','lf-city':'Ciudad','lf-year':'Año','lf-model':'Marca / Modelo','lf-miles':'Millaje',
+    'lf-upload':'Sube fotos de tu carro','lf-submit':'Enviar mi carro','lf-success':'¡Enviado! Te contactaremos en menos de 24 horas.',
+    'cs-pill':'Próximamente','cs-lbl':'Planes mensuales y semestrales',
+    'cs-desc':'Diseñada para estudiantes internacionales y residentes temporales. Quédate en Chicago el tiempo que necesites — pagos mensuales, sin sorpresas.',
+    'cs-btn':'Notifícame cuando esté disponible',
+    'ft-text':'Chicago, IL · Flexibilidad · Empatía','fl-buy':'Comprar','fl-rent':'Rentar','fl-earn':'Ganar',
+    'tab-buy':'Comprar','tab-rent':'Rentar','tab-list':'Renta tu carro','tab-sub':'Suscripción'
+  }
+};
+let lang = 'en';
+window.setLang = function(l){
+  lang = l;
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-es').classList.toggle('active', l==='es');
+  const t = TXT[l];
+  for(const[id,val] of Object.entries(t)){
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = val;
+  }
+};
+
+// ── Tabs ───────────────────────────────────────────────────
+window.switchTab = function(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  setTimeout(triggerReveal, 100);
+};
+window.goTab = function(id){
+  document.getElementById('main-section').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>window.switchTab(id), 400);
+};
+
+// ── Nav scroll ─────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 50);
+},{passive:true});
+
+// ── Reveal on scroll ───────────────────────────────────────
+function triggerReveal(){
+  document.querySelectorAll('.car-card,.rent-card,.earn-step').forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('visible'), i*70);
+  });
+}
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.1, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.earn-step').forEach(el=>obs.observe(el));
+setTimeout(triggerReveal, 400);
+</script>
+</body>
+</html>
