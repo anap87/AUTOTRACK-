@@ -211,6 +211,27 @@ footer{padding:3rem;border-top:1px solid var(--border);display:flex;align-items:
 @keyframes spin{to{transform:rotate(360deg)}}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+  
+/* ── MOBILE NAV ── */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:transparent;border:none}
+.hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.mobile-menu{display:none;position:fixed;top:68px;left:0;right:0;background:rgba(10,22,40,0.98);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.08);padding:0.5rem 2rem 1.5rem;z-index:999;flex-direction:column}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:12px;font-weight:400;letter-spacing:3px;color:rgba(255,255,255,0.7);text-decoration:none;text-transform:uppercase;padding:1rem 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:color 0.3s}
+.mobile-menu a:hover{color:#fff}
+.mobile-lang-row{display:flex;gap:0.5rem;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06)}
+
+@media(max-width:768px){
+  .nav{padding:0 1.5rem}
+  .nav-links{display:none}
+  .nav-right{display:none}
+  .hamburger{display:flex}
+}
+
 </style>
 </head>
 <body>
@@ -239,6 +260,23 @@ footer{padding:3rem;border-top:1px solid var(--border);display:flex;align-items:
     <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
     <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
   </div>
+
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a onclick="goTab('buy');closeMenu()" id="m-buy">Buy a car</a>
+  <a onclick="goTab('rent');closeMenu()" id="m-rent">Rent a car</a>
+  <a onclick="goTab('list');closeMenu()" id="m-list">Rent your car</a>
+  <div class="mobile-lang-row">
+    <button class="lang-btn active" onclick="setLang('en');closeMenu()">EN</button>
+    <button class="lang-btn" onclick="setLang('es');closeMenu()">ES</button>
+  </div>
+</div>
 </nav>
 
 <!-- HERO 3D -->
@@ -1085,6 +1123,17 @@ const obs = new IntersectionObserver(entries=>{
 },{threshold:0.1, rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.earn-step').forEach(el=>obs.observe(el));
 setTimeout(triggerReveal, 400);
+
+function toggleMenu(){
+  document.getElementById('mobile-menu').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+// Cierra el menú al hacer scroll
+window.addEventListener('scroll',closeMenu,{passive:true});
 </script>
 </body>
 </html>
