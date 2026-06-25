@@ -227,15 +227,9 @@ footer{padding:3rem;border-top:1px solid var(--border);display:flex;align-items:
 </head>
 <body>
 <nav class="nav" id="main-nav">
-  <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-    <svg viewBox="0 0 90 65" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="10" y1="56" x2="40" y2="10" stroke-width="3.5"/>
-      <line x1="80" y1="56" x2="50" y2="10" stroke-width="3.5"/>
-      <line x1="22" y1="38" x2="58" y2="38" stroke-width="3" opacity="0.55"/>
-      <line x1="28" y1="26" x2="62" y2="48" stroke-width="2" opacity="0.38"/>
-    </svg>
-    <span class="nav-wordmark">AutoTrack</span>
-  </div>
+<div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <img src="logoauto.png" alt="AutoTrack" style="height:36px;object-fit:contain">
+</div>
   <ul class="nav-links">
     <li><a onclick="goTab('buy')" id="nl-buy">Buy a car</a></li>
     <li><a onclick="goTab('rent')" id="nl-rent">Rent a car</a></li>
@@ -257,7 +251,7 @@ footer{padding:3rem;border-top:1px solid var(--border);display:flex;align-items:
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-eyebrow" id="h-eyebrow">Chicago &middot; Est. 2024</div>
-    <h1 class="hero-title">AUTO<b>TRACK</b></h1>
+    <img src="logoauto.png" alt="AutoTrack" style="max-width:min(420px,80vw);width:100%;object-fit:contain;opacity:0;animation:fadeUp 1s ease 0.7s forwards">
     <p class="hero-sub" id="h-sub">Buy certified vehicles, rent by the day, or turn your car into monthly income. Flexible. Honest. Built for you.</p>
     <div class="hero-btns">
       <button class="btn-white" onclick="goTab('buy')"><span id="h-cta1">Buy a car</span> &rarr;</button>
@@ -408,12 +402,7 @@ footer{padding:3rem;border-top:1px solid var(--border);display:flex;align-items:
 </section>
 
 <footer>
-  <svg width="34" height="24" viewBox="0 0 90 65" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4">
-    <line x1="10" y1="56" x2="40" y2="10" stroke-width="3.5"/>
-    <line x1="80" y1="56" x2="50" y2="10" stroke-width="3.5"/>
-    <line x1="22" y1="38" x2="58" y2="38" stroke-width="3" opacity="0.55"/>
-    <line x1="28" y1="26" x2="62" y2="48" stroke-width="2" opacity="0.38"/>
-  </svg>
+  <img src="logoauto.png" alt="AutoTrack" style="height:28px;object-fit:contain;opacity:0.4">
   <div class="footer-text" id="ft-text">Chicago, IL &middot; Flexibility &middot; Empathy</div>
   <div class="footer-links">
     <a onclick="goTab('buy')" id="fl-buy">Buy</a>
